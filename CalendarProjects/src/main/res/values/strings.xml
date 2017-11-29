@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CalendarProjects</string>
+
+    <string name="date_string_year_month">%1$d年%2$d月</string>
+
+    <string name="date_string_year_month_day">%1$d年%2$d月%3$d日</string>
+</resources>
