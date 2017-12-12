@@ -1,1 +1,1 @@
-# OpenSourceSamplesForAndroid
+# OpenSourceCodeForAndroid
