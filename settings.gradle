@@ -1,1 +1,1 @@
-include ':CalendarProjects', ':baselib'
+include ':CalendarProjects', ':baselib', ':reslib'

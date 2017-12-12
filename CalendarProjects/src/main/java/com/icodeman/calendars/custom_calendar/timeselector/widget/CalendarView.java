@@ -1,4 +1,4 @@
-package com.icodeman.calendars.custom_calendar;
+package com.icodeman.calendars.custom_calendar.timeselector.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
+import android.graphics.RectF;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,20 +27,18 @@ import java.util.List;
 
 /**
  * @author ICodeMan
- * @date 2017/11/24
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2017/12/8
  */
-
 public class CalendarView extends FrameLayout {
 
-    @IntDef({STYLE_NO_SELECTOR, STYLE_WEEK_SELECTOR, STYLE_DAY_SELECTOR, STYLE_DAY_AND_WEEK_SELECTOR})
+    @IntDef({STYLE_NO_SELECTOR,STYLE_WEEK_SELECTOR, STYLE_DAY_SELECTOR})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SelectorStyle {
     }
-
     public static final int STYLE_NO_SELECTOR = 0;
     public static final int STYLE_DAY_SELECTOR = 1;
     public static final int STYLE_WEEK_SELECTOR = 2;
-    public static final int STYLE_DAY_AND_WEEK_SELECTOR = 3;
 
     // ------------------------      用于记录 Item 的信息
 
@@ -51,14 +50,20 @@ public class CalendarView extends FrameLayout {
 
     // ------------------------      用于绘制 Item
 
+    private static final int DRAW_STATE_NEED = 0;//需要刷新
+    private static final int DRAW_STATE_DOING = 1;//正在刷新
+    private static final int DRAW_STATE_FINISH = 2;//刷新结束
+
+    private int drawState = DRAW_STATE_FINISH;
     private int lastViewLeft;
     private int lastViewTop;
 
 
     // ------------------------      用于绘制CalendarView的具体宽高
 
-    private int origWidthSpec = 0;
-    private int origHeightSpec = 0;
+    private int itemWidth = 0;
+    private int itemHeight = 0;
+    private int titleHeight = 0;
     private int measureWidth = 0;
     private int measureHeight = 0;
     /**
@@ -80,12 +85,12 @@ public class CalendarView extends FrameLayout {
     /**
      * down动作的坐标
      */
-    private float[] downPosition = new float[]{-1, -1};
+    private float[] downPosition;
     /**
      * 绘制单日点击效果的Paint
      */
     private Paint circlePaint;
-    private int circleWidth;
+    private int circleWidth = -1;
     private int circleColor = Color.parseColor("#888888");
     /**
      * 绘制单周点击效果的Paint和绘制虚线的Effect
@@ -95,32 +100,29 @@ public class CalendarView extends FrameLayout {
     /**
      * 虚线宽度
      */
-    private int lineWidth = 4;
+    private int lineWidth = 1;
     /**
      * 虚线的偏移量（与每行边界的距离）
      */
-    private int lineOffset;
+    private int lineOffset = -1;
+    /**
+     * 虚线的圆角
+     */
+    private int lineCircleWidth = 10;
     /**
      * 三种状态的颜色（不可点击，未选择状态，选择状态）
      */
-    private int lineColorUnable = Color.parseColor("#800000");
     private int lineColorNormal = Color.parseColor("#888888");
     private int lineColorSelect = Color.parseColor("#ff0000");
-
-
-    // --------------    用于特殊值记录
 
     /**
      * 用来记录是否有默认值
      */
-    boolean hasDefault = false;
-    PointInfo defaultPoint;
-
-    /**
-     * 特殊点
-     * PointInfo中只有时间相关参数
-     */
-    List<PointInfo> specialPoint;
+    private boolean hasDefault = false;
+    private int defaultYear;
+    private int defaultMonth;
+    private int defaultDay;
+    private int defaultWeek;
 
     public CalendarView(@NonNull Context context) {
         super(context);
@@ -133,14 +135,8 @@ public class CalendarView extends FrameLayout {
     @Override
     @SuppressLint("WrongConstant")
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (adapter == null) {
-            origWidthSpec = MeasureSpec.getMode(widthMeasureSpec);
-            origHeightSpec = MeasureSpec.getMode(heightMeasureSpec);
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        } else {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(measureWidth, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(measureHeight, MeasureSpec.EXACTLY));
-        }
+        super.onMeasure(MeasureSpec.makeMeasureSpec(measureWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(measureHeight, MeasureSpec.EXACTLY));
     }
 
     @Override
@@ -156,26 +152,25 @@ public class CalendarView extends FrameLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.i("LMW", "onDraw()");
-        if (adapter == null) {
+        if (adapter == null || drawState != DRAW_STATE_NEED) {
             return;
         }
         resetSelects();
+        drawState = DRAW_STATE_DOING;
         if (selectorStyle == STYLE_DAY_SELECTOR) {
             drawCircle(canvas);
         } else if (selectorStyle == STYLE_WEEK_SELECTOR) {
             drawLines(canvas);
-        } else if (selectorStyle == STYLE_DAY_AND_WEEK_SELECTOR) {
-            drawCircle(canvas);
-            drawLines(canvas);
         }
         super.onDraw(canvas);
+        drawState = DRAW_STATE_FINISH;
     }
 
     private void resetCirclePaint() {
         if (circlePaint == null) {
             circlePaint = new Paint();
         }
+        circlePaint.setAntiAlias(true);
         circlePaint.setStyle(Paint.Style.FILL);
         circlePaint.setColor(circleColor);
     }
@@ -184,11 +179,46 @@ public class CalendarView extends FrameLayout {
         if (linePaint == null) {
             linePaint = new Paint();
         }
+        linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(lineWidth);
         linePaint.setStyle(Paint.Style.STROKE);
         //设置虚线的间隔和点的长度
         effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);
         linePaint.setPathEffect(effects);
+        linePaint.setColor(lineColorNormal);
+    }
+
+    private void drawCircle(Canvas canvas) {
+        if (circlePaint == null) {
+            resetCirclePaint();
+        }
+        float[] center = null;
+        int lastHeight = 0;
+        for (int row = 0; row < lineInfos.size(); row++) {
+            int height = lastHeight + lineInfos.get(row).height;
+            if (circleWidth == -1) {
+                circleWidth = (int) Math.min(0.3f * lineInfos.get(row).width, 0.3f * lineInfos.get(row).height);
+            }
+            if (row > 0) {
+                if (downPosition != null && isDownPositionIn(downPosition[1], lastHeight, height)) {
+                    int column = (int) (downPosition[0] / lineInfos.get(row).width);
+                    center = new float[2];
+                    //在点击区域
+                    buildSelectorPoint(row, column, height, center);
+                    break;
+                } else if (downPosition == null) {
+                    for (int column = 0; column < adapter.getColumnCount(); column++) {
+                        if (isDefaultPoint(row, column)) {
+                            center = new float[2];
+                            //是默认选中区域
+                            buildSelectorPoint(row, column, height, center);
+                            break;
+                        }
+                    }
+                }
+            }
+            lastHeight = height;
+        }
     }
 
     private void drawLines(Canvas canvas) {
@@ -201,25 +231,38 @@ public class CalendarView extends FrameLayout {
         for (int row = 0; row < lineInfos.size(); row++) {
             right = lineInfos.get(row).width * adapter.getColumnCount();
             bottom = top + lineInfos.get(row).height;
-            lineOffset = (int) Math.min(0.125f * lineInfos.get(row).width, 0.125f * lineInfos.get(row).height);
+            if (lineOffset == -1) {
+                lineOffset = (int) Math.min(0.125f * lineInfos.get(row).width, 0.125f * lineInfos.get(row).height) - lineWidth;
+            }
             if (row > 0) {
                 List<PointInfo> infos = adapter.getPointInfos(row);
-                if (infos != null && infos.size() > 0 && infos.get(0).week == -1) {
-                    //不是本月的周，不可选中
-                    linePaint.setStyle(Paint.Style.STROKE);
-                    linePaint.setColor(lineColorUnable);
-                } else if (isDownPositionIn(downPosition[1], top, bottom) || isDefaultLine(row)) {
-                    //选中
-                    lineOffset -= lineWidth;
-                    linePaint.setStyle(Paint.Style.FILL);
-                    linePaint.setColor(lineColorSelect);
-                    lastSelectRow = row;
-                    adapter.onLineSelect(infos);
-                } else {
-                    linePaint.setStyle(Paint.Style.STROKE);
-                    linePaint.setColor(lineColorNormal);
+                if(infos == null || infos.size()<0){
+                    resetLinePaint();
                 }
-                if (selectorStyle == STYLE_WEEK_SELECTOR || selectorStyle == STYLE_DAY_AND_WEEK_SELECTOR) {
+                if (downPosition == null && isDefaultLine(row)) {
+                    //没有点击过，并且是默认点击区域
+                    buildSelectorLine(row, infos);
+                }else if (downPosition != null
+                        && isDownPositionIn(downPosition[1], top, bottom)) {
+                    //在点击区域
+                    buildSelectorLine(row, infos);
+                } else if (downPosition != null
+                        && lastSelectRow == row
+                        && !isInClickableSpace(downPosition[0], downPosition[1])) {
+                    //不在点击区域，上次的点击在点击区域
+                    buildSelectorLine(row, infos);
+                }else if(downPosition == null && adapter.getSelectedTimes() != null && adapter.getSelectedTimes().length > 0) {
+                    //切换月份之前有点击过
+                    long time = adapter.getSelectedTimes()[0];
+                    if(infos != null && infos.size() > 0 && time == infos.get(0).time) {
+                        buildSelectorLine(row, infos);
+                    }else {
+                        resetLinePaint();
+                    }
+                } else {
+                    resetLinePaint();
+                }
+                if (selectorStyle == STYLE_WEEK_SELECTOR) {
                     canvas.drawPath(getLinePath(left, top, right, bottom, lineOffset), linePaint);
                 }
             }
@@ -227,20 +270,44 @@ public class CalendarView extends FrameLayout {
         }
     }
 
+    private void buildSelectorLine(int row, List<PointInfo> infos) {
+        hasDefault = false;//绘制了一次之后记得重置默认状态，否则会出现可以选择两行的情况
+        linePaint.setStyle(Paint.Style.FILL);
+        linePaint.setColor(lineColorSelect);
+        lastSelectRow = row;
+        adapter.onLineSelect(infos);
+    }
+
+    private void buildSelectorPoint(int row, int column, int height, float[] center) {
+        hasDefault = false;
+        center[0] = (column + 0.5f) * lineInfos.get(row).width;
+        center[1] = height - 0.5f * lineInfos.get(row).height;
+        lastSelectRow = row;
+        lastSelectColumn = column;
+        PointInfo info = adapter.getPointInfo(row, column);
+        adapter.onItemSelect(info);
+    }
+
     private boolean isDefaultPoint(int row, int column) {
         PointInfo info = adapter.getPointInfo(row, column);
-        if (defaultPoint != null && info != null) {
-            return hasDefault && info.year == defaultPoint.year && info.month == defaultPoint.month && info.day == defaultPoint.month;
+        if (info != null) {
+            return hasDefault
+                    && info.year == defaultYear
+                    && info.month == defaultMonth
+                    && info.day == defaultDay;
         }
         return false;
     }
 
     private boolean isDefaultLine(int row) {
         List<PointInfo> infos = adapter.getPointInfos(row);
-        if (defaultPoint != null && infos != null && infos.size() > 0) {
+        if (infos != null && infos.size() > 0) {
             PointInfo info = infos.get(0);
             if (info != null) {
-                return hasDefault && info.year == defaultPoint.year && info.month == defaultPoint.month && info.week == defaultPoint.week;
+                return hasDefault
+                        && info.year == defaultYear
+                        && info.month == defaultMonth
+                        && info.week == defaultWeek;
             }
         }
         return false;
@@ -248,80 +315,33 @@ public class CalendarView extends FrameLayout {
 
     private Path getLinePath(int left, int top, int right, int bottom, int lineOffset) {
         Path path = new Path();
-        path.moveTo(left + lineOffset, top + lineOffset);
-        path.lineTo(right - lineOffset, top + lineOffset);
-        path.lineTo(right - lineOffset, bottom - lineOffset);
-        path.lineTo(left + lineOffset, bottom - lineOffset);
-        path.lineTo(left + lineOffset, top + lineOffset);
+        top = top + lineOffset;
+        bottom = bottom - lineOffset;
+        int lineCircleWidth = (bottom - top) / 2;
+        path.moveTo(left + lineCircleWidth, top);
+
+        path.lineTo(right - lineCircleWidth, top);
+        RectF rectF;
+        rectF = new RectF(right - 2 * lineCircleWidth, top, right, bottom);
+        path.arcTo(rectF, -90, 180, false);
+
+        path.lineTo(left + lineCircleWidth, bottom);
+        rectF = new RectF(left, top, left + 2 * lineCircleWidth, bottom);
+        path.arcTo(rectF, 90, 180, false);
         return path;
-    }
-
-    private void drawCircle(Canvas canvas) {
-        if (circlePaint == null) {
-            resetCirclePaint();
-        }
-        float[] center = new float[2];
-        int lastHeight = 0;
-        for (int row = 0; row < lineInfos.size(); row++) {
-            int height = lastHeight + lineInfos.get(row).height;
-            circleWidth = (int) Math.min(0.3f * lineInfos.get(row).width, 0.3f * lineInfos.get(row).height);
-            if (row > 0) {
-                int column = (int) (downPosition[0] / lineInfos.get(row).width);
-                PointInfo info = adapter.getPointInfo(row, column);
-                if (isDownPositionIn(downPosition[1], lastHeight, height) || isDefaultPoint(row, column)) {
-                    //在点击区域
-                    center[0] = (column + 0.5f) * lineInfos.get(row).width;
-                    center[1] = height - 0.5f * lineInfos.get(row).height;
-                    lastSelectRow = row;
-                    lastSelectColumn = column;
-                    adapter.onItemSelect(info);
-                    checkBackSpecial(info,true);
-                    break;
-                }
-                checkBackSpecial(info,false);
-            }
-            lastHeight = height;
-        }
-        if (selectorStyle == STYLE_DAY_SELECTOR || selectorStyle == STYLE_DAY_AND_WEEK_SELECTOR) {
-            canvas.drawCircle(center[0], center[1], circleWidth, circlePaint);
-        }
-    }
-
-    private void checkBackSpecial(PointInfo info,boolean inSelect){
-        if(specialPoint == null || specialPoint.size() == 0){
-            return;
-        }else {
-            for (PointInfo sp :specialPoint){
-                if(sp.isSameDay(info)){
-                    adapter.oItemSpecial(info,inSelect);
-                }
-            }
-        }
     }
 
     private boolean isDownPositionIn(float num, int min, int max) {
         return num >= min && num < max;
     }
 
-    private boolean hasCircleLast() {
-        return (selectorStyle == STYLE_DAY_AND_WEEK_SELECTOR || selectorStyle == STYLE_DAY_SELECTOR)
-                && lastSelectRow != -1 && lastSelectColumn != -1;
-    }
-
-    private boolean hasLineLast() {
-        return (selectorStyle == STYLE_DAY_AND_WEEK_SELECTOR || selectorStyle == STYLE_WEEK_SELECTOR)
-                && lastSelectRow != -1;
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (isInClickableSpace(event.getX(), event.getY())) {
-                downPosition = new float[2];
-                downPosition[0] = event.getX();
-                downPosition[1] = event.getY();
-                invalidate();
-            }
+            downPosition = new float[2];
+            downPosition[0] = event.getX();
+            downPosition[1] = event.getY();
+            refreshViews();
         }
         return super.onTouchEvent(event);
     }
@@ -343,6 +363,7 @@ public class CalendarView extends FrameLayout {
         resetCirclePaint();
         resetLinePaint();
         try {
+            drawState = DRAW_STATE_NEED;
             invalidate();
         } catch (Exception e) {
             postInvalidate();
@@ -355,36 +376,37 @@ public class CalendarView extends FrameLayout {
      * 2. Adapter的数据集发生变化
      */
     public void resetViews() {
+        if (adapter == null) {
+            return;
+        }
+        measure(0, 0);
         resetDatas();
         for (int row = 0; row < adapter.getRowCount(); row++) {
             List<View> line = new ArrayList<>();
-            int itemWidth = -1;
-            int itemHeight = -1;
-            int weekFlag = -1;
+            int itemWidth = 0;
+            int itemHeight = 0;
             for (int column = 0; column < adapter.getColumnCount(); column++) {
                 View view;
                 if (row == 0) {
                     view = adapter.getWeeksView(column);
+                    view.measure(0, 0);
+                    itemWidth = this.itemWidth <= 0 ? view.getMeasuredWidth() : this.itemWidth;
+                    itemHeight = view.getMeasuredHeight();
                 } else {
                     PointInfo info = adapter.getPointInfo(row, column);
                     view = adapter.getDaysView(info);
                     info.view = view;
-                    weekFlag = info.week;
+                    view.measure(0, 0);
+                    itemWidth = this.itemWidth <= 0 ? view.getMeasuredWidth() : this.itemWidth;
+                    itemHeight = this.itemHeight <= 0 ? view.getMeasuredHeight() : this.itemHeight;
                 }
                 addView(view);
-                view.measure(0, 0);
-
-                itemWidth = Math.max(itemWidth, view.getMeasuredWidth());
-                if (origWidthSpec == MeasureSpec.EXACTLY) {
-                    itemWidth = Math.max(itemWidth, (int) (1f * getMeasuredWidth() / adapter.getColumnCount()));
-                }
-                itemHeight = Math.max(itemHeight, view.getMeasuredHeight());
                 line.add(view);
             }
             measureWidth = itemWidth * adapter.getColumnCount();
             measureHeight += itemHeight;
             spaceRight = measureWidth;
-            if (weekFlag == -1) {
+            if (row == 0) {
                 spaceTop = measureHeight;
             } else {
                 spaceBottom = measureHeight;
@@ -393,6 +415,7 @@ public class CalendarView extends FrameLayout {
             views.put(row, line);
         }
         requestLayout();
+        refreshViews();
     }
 
     /**
@@ -409,8 +432,6 @@ public class CalendarView extends FrameLayout {
                 }
             }
         }
-        lastSelectRow = -1;
-        lastSelectColumn = -1;
     }
 
     /**
@@ -449,10 +470,36 @@ public class CalendarView extends FrameLayout {
         lastViewTop = lastViewTop + info.height;
     }
 
+    /**
+     * 设置默认选择的周
+     */
+    public void setDefaultWeek(int year, int month, int week) {
+        defaultYear = year;
+        defaultMonth = month;
+        defaultWeek = week;
+        hasDefault = true;
+        refreshViews();
+    }
+
+    /**
+     * 设置默认选择的日
+     */
+    public void setDefaultDay(int year, int month, int day) {
+        defaultYear = year;
+        defaultMonth = month;
+        defaultDay = day;
+        hasDefault = true;
+        refreshViews();
+    }
+
     public void setAdapter(CalendarAdapter adapter) {
         this.adapter = adapter;
         this.adapter.bindView(this);
         resetViews();
+    }
+
+    public ICalendarAdapter getAdapter() {
+        return adapter;
     }
 
     public void setSelectorStyle(@SelectorStyle int style) {
@@ -462,16 +509,21 @@ public class CalendarView extends FrameLayout {
 
     public void setCircleColor(int circleColor) {
         this.circleColor = circleColor;
-        resetViews();
+        refreshViews();
+    }
+
+    public void setCircleWidth(int circleWidth) {
+        this.circleWidth = circleWidth;
+        refreshViews();
     }
 
     public void setLineWidth(int lineWidth) {
         this.lineWidth = lineWidth;
-        resetViews();
+        refreshViews();
     }
 
-    public void setLineColorUnable(int lineColorUnable) {
-        this.lineColorUnable = lineColorUnable;
+    public void setLineOffset(int lineOffset) {
+        this.lineOffset = lineOffset;
         refreshViews();
     }
 
@@ -482,6 +534,21 @@ public class CalendarView extends FrameLayout {
 
     public void setLineColorSelect(int lineColorSelect) {
         this.lineColorSelect = lineColorSelect;
+        refreshViews();
+    }
+
+    public void setItemWidth(int itemWidth) {
+        this.itemWidth = itemWidth;
+        resetViews();
+    }
+
+    public void setItemHeight(int itemHeight) {
+        this.itemHeight = itemHeight;
+        resetViews();
+    }
+
+    public void setTitleHeight(int titleHeight) {
+        this.titleHeight = titleHeight;
         refreshViews();
     }
 
@@ -496,11 +563,7 @@ public class CalendarView extends FrameLayout {
     }
 
     public static class PointInfo {
-        //布局相关参数
-
         public View view;
-
-        //时间相关参数
 
         public int year;
         public int month;
@@ -512,26 +575,16 @@ public class CalendarView extends FrameLayout {
          * week = -1 指的是当前日期属于前一个月的周
          */
         public int week;
+        public long time;
 
-        public PointInfo(int year, int month, int day) {
-            this.year = year;
-            this.month = month;
-            this.day = day;
-        }
-
-        public PointInfo(int year, int month, int day, int week) {
-            this.year = year;
-            this.month = month;
-            this.day = day;
+        public PointInfo(long time, int week) {
+            this.time = time;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(time);
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DAY_OF_MONTH);
             this.week = week;
-        }
-
-        public boolean isSameDay(PointInfo info) {
-            return info.year == year && info.month == month && info.day == day;
-        }
-
-        public boolean isSameWeek(PointInfo info) {
-            return info.year == year && info.month == month && info.week == week;
         }
     }
 
@@ -558,14 +611,6 @@ public class CalendarView extends FrameLayout {
         View getWeeksView(int column);
 
         View getDaysView(PointInfo pointInfo);
-
-        /**
-         * 特殊点处理
-         *
-         * @param pointInfo  特殊点信息
-         * @param isSelected 特殊点是否在选择范围内
-         */
-        void oItemSpecial(PointInfo pointInfo, boolean isSelected);
 
         /**
          * 当某个Item被选择时
@@ -597,29 +642,14 @@ public class CalendarView extends FrameLayout {
         private SparseArray<List<PointInfo>> lineInfos;
         private int rowCount;
 
-        private int selectYear;
-        private int selectMonth;
-        private int selectDay;
-        private int selectWeek;
+        private List<Long> selectedTimes = new ArrayList<>();
 
         public CalendarAdapter(Context context) {
             this.context = context;
         }
 
-        public void setTime(int year, int month) {
-            setTime(year, month, 1);
-        }
-
         public void setTime(int year, int month, int day) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, day);
-            calendar.set(Calendar.HOUR, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            lineInfos = getNumListByTime(calendar.getTimeInMillis());
+            lineInfos = getNumListByTime(getZeroTime(year, month, day));
         }
 
         private SparseArray<List<PointInfo>> getNumListByTime(long time) {
@@ -640,7 +670,7 @@ public class CalendarView extends FrameLayout {
                 int tempDayOfWeek = firstDayOfWeek == Calendar.SUNDAY ? Calendar.SATURDAY - 1 : firstDayOfWeek - Calendar.MONDAY;
                 for (int i = tempDayOfWeek; i > 0; i--) {
                     temp.setTimeInMillis(calendar.getTimeInMillis() - i * ONE_DAY);
-                    PointInfo pointInfo = new PointInfo(temp.get(Calendar.YEAR), temp.get(Calendar.MONTH), temp.get(Calendar.DAY_OF_MONTH), week);
+                    PointInfo pointInfo = new PointInfo(temp.getTimeInMillis(), week);
                     infos.add(pointInfo);
                 }
                 pointInfos.put(rowCount, infos);
@@ -661,7 +691,7 @@ public class CalendarView extends FrameLayout {
                 if (pointInfos.get(rowCount) == null) {
                     pointInfos.put(rowCount, new ArrayList<PointInfo>());
                 }
-                PointInfo pointInfo = new PointInfo(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), week);
+                PointInfo pointInfo = new PointInfo(calendar.getTimeInMillis(), week);
                 pointInfos.get(rowCount).add(pointInfo);
                 calendar.setTimeInMillis(calendar.getTimeInMillis() + ONE_DAY);
                 if (calendar.get(Calendar.MONTH) == month && calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
@@ -670,7 +700,7 @@ public class CalendarView extends FrameLayout {
             } while (calendar.get(Calendar.MONTH) == month);
             //计算下个月需要显示的天数
             while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
-                PointInfo pointInfo = new PointInfo(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), week + 1);
+                PointInfo pointInfo = new PointInfo(calendar.getTimeInMillis(), week + 1);
                 if (pointInfos.get(rowCount) == null) {
                     pointInfos.put(rowCount, new ArrayList<PointInfo>());
                 }
@@ -703,13 +733,11 @@ public class CalendarView extends FrameLayout {
 
         @Override
         public void onItemSelect(PointInfo info) {
-            selectYear = info.year;
-            selectMonth = info.month;
-            selectDay = info.day;
-            selectWeek = info.week;
             if (info == null) {
                 return;
             }
+            selectedTimes.clear();
+            selectedTimes.add(info.time);
         }
 
         @Override
@@ -717,9 +745,11 @@ public class CalendarView extends FrameLayout {
             if (infos == null || infos.size() == 0) {
                 return;
             }
-            for (PointInfo info : infos) {
+            selectedTimes.clear();
+            for (int i = 0; i < infos.size(); i++) {
+                PointInfo info = infos.get(i);
                 if (info != null) {
-                    onItemSelect(info);
+                    selectedTimes.add(info.time);
                 }
             }
         }
@@ -735,39 +765,33 @@ public class CalendarView extends FrameLayout {
             this.view = view;
         }
 
+        private long getZeroTime(int year, int month, int day) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            return calendar.getTimeInMillis();
+        }
+
         public void notifyDataSetChange() {
             if (view != null) {
                 view.resetViews();
             }
         }
 
-        public void setDefatltDay(int year, int month, int day) {
-            view.defaultPoint = new PointInfo(year, month, day);
-            view.refreshViews();
-        }
-
-        public void setDefaltWeek(int year, int month, int week) {
-            view.defaultPoint = new PointInfo(year, month, 0, week);
-            view.refreshViews();
-        }
-
-        public void addSpecial(int year, int month, int day) {
-            if (view.specialPoint == null) {
-                view.specialPoint = new ArrayList<>();
+        public long[] getSelectedTimes() {
+            if (selectedTimes.size() != 0) {
+                long[] times = new long[selectedTimes.size()];
+                for (int i = 0; i < times.length; i++) {
+                    times[i] = selectedTimes.get(i);
+                }
+                return times;
             }
-            view.specialPoint.add(new PointInfo(year, month, day));
-        }
-
-        /**
-         * @return int[]{year,month,day,week} week = -1 时表示是上月的最后一周
-         */
-        public int[] getSelected() {
-            int[] selected = new int[4];
-            selected[0] = selectYear;
-            selected[1] = selectMonth;
-            selected[2] = selectDay;
-            selected[3] = selectWeek;
-            return selected;
+            return null;
         }
     }
 }

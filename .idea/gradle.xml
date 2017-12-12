@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CalendarProjects" />
             <option value="$PROJECT_DIR$/baselib" />
+            <option value="$PROJECT_DIR$/reslib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

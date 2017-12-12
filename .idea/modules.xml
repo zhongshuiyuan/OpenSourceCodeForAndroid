@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/CalendarProjects/CalendarProjects.iml" filepath="$PROJECT_DIR$/CalendarProjects/CalendarProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/SampleProjects.iml" filepath="$PROJECT_DIR$/SampleProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselib/baselib.iml" filepath="$PROJECT_DIR$/baselib/baselib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/reslib/reslib.iml" filepath="$PROJECT_DIR$/reslib/reslib.iml" />
     </modules>
   </component>
 </project>

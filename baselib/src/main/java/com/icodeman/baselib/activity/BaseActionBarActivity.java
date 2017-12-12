@@ -15,6 +15,7 @@ import com.icodeman.baselib.R;
  */
 
 public abstract class BaseActionBarActivity extends AppCompatActivity{
+    private View baseView;
     private Toolbar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public abstract class BaseActionBarActivity extends AppCompatActivity{
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         initToolbar(toolbar);
         setSupportActionBar(toolbar);
+        baseView = getLayoutInflater().inflate(getLayoutId(),null);
         ((ViewGroup)findViewById(R.id.frame)).addView(getLayoutInflater().inflate(getLayoutId(),null));
     }
 
@@ -36,4 +38,8 @@ public abstract class BaseActionBarActivity extends AppCompatActivity{
      * @return
      */
     public abstract int getLayoutId();
+
+    public <V extends View> V getView(int resId){
+        return (V)baseView.findViewById(resId);
+    }
 }

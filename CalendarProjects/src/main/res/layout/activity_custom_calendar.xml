@@ -2,52 +2,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_ffffffff"
-    android:gravity="center"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ll_date_change"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
+        <ImageView
             android:id="@+id/bt_last"
-            android:layout_width="32dp"
-            android:layout_height="24dp"
-            android:background="@drawable/time_changer"
-            android:gravity="center"
-            android:text="&#060;"
-            android:textSize="14sp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/open_left"
+            android:clickable="true" />
 
         <TextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="2017年7月"
-            android:textColor="@color/black_80000000"
-            android:textSize="16sp" />
+            android:textColor="@color/gray_666666"
+            android:textSize="18sp" />
 
-        <Button
+        <ImageView
             android:id="@+id/bt_next"
-            android:layout_width="32dp"
-            android:layout_height="24dp"
-            android:background="@drawable/time_changer"
-            android:gravity="center"
-            android:text="&#062;"
-            android:textSize="14sp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/open_right"
+            android:clickable="true"/>
 
     </LinearLayout>
 
-    <com.icodeman.calendars.custom_calendar.CalendarView
+    <com.icodeman.calendars.custom_calendar.timeselector.widget.CalendarView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/calendar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/white_ffffffff" />
-
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"/>
+    <!--注意，CalendarView 必须要使用一个背景，否则不会绘制界面-->
 </LinearLayout>

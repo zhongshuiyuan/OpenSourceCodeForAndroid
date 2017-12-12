@@ -1,7 +1,6 @@
 package com.icodeman.calendars.custom_calendar;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,10 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.icodeman.baselib.activity.BaseActionBarActivity;
+import com.icodeman.baselib.utils.DensityUtil;
 import com.icodeman.baselib.utils.TimeUtil;
 import com.icodeman.calendars.R;
-
-import java.util.Calendar;
+import com.icodeman.calendars.custom_calendar.timeselector.adapter.DayAndWeekAdapter;
+import com.icodeman.calendars.custom_calendar.timeselector.widget.CalendarView;
 
 
 /**
@@ -32,43 +32,36 @@ public class CustomCalendarActivity extends BaseActionBarActivity implements Vie
     }
 
     private long time;
-    private int[] timeInfo;
+    private TimeUtil.TimeInfo timeInfo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        calendarView = (CalendarView) findViewById(R.id.calendar);
         tvDate = (TextView) findViewById(R.id.tv_time);
-
         findViewById(R.id.bt_last).setOnClickListener(this);
         findViewById(R.id.bt_next).setOnClickListener(this);
 
+        initTime();
 
-        adapter = new DayAndWeekAdapter(CustomCalendarActivity.this);
-        calendarView.setSelectorStyle(CalendarView.STYLE_WEEK_SELECTOR);
-        calendarView.setLineColorUnable(getResources().getColor(R.color.white_ffffffff));
-        calendarView.setLineColorNormal(getResources().getColor(R.color.white_ff8e8e8e));
-        calendarView.setLineColorSelect(getResources().getColor(R.color.white_808e8e8e));
+        initCalendar();
+    }
 
+    private void initTime() {
         time = System.currentTimeMillis();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(time);
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
-        final int week = calendar.get(Calendar.WEEK_OF_MONTH);
-        timeInfo = TimeUtil.getTimeInfo(time);
-        changeTimeInfo(0);
+        timeInfo = TimeUtil.getTimeInfo(time,true);
+        changeTitle(timeInfo);
+    }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adapter.setDefaltWeek(year, month, week - 1);
-                adapter.addSpecial(year, month, day);
-                calendarView.setAdapter(adapter);
-            }
-        }, 2000);
+    private void initCalendar() {
+        calendarView = (CalendarView) findViewById(R.id.calendar);
+
+        calendarView.setSelectorStyle(CalendarView.STYLE_NO_SELECTOR);
+        calendarView.setLineOffset(DensityUtil.dip2px(this, 6));
+        calendarView.setLineColorNormal(getResources().getColor(R.color.gray_666666));
+        calendarView.setLineColorSelect(getResources().getColor(R.color.black));
+        calendarView.setCircleColor(this.getResources().getColor(R.color.color_eb5a39));
+
+        updateAdapter();
     }
 
     @Override
@@ -85,9 +78,8 @@ public class CustomCalendarActivity extends BaseActionBarActivity implements Vie
             calendarView.setSelectorStyle(CalendarView.STYLE_DAY_SELECTOR);
         } else if (item.getItemId() == R.id.week_style) {
             calendarView.setSelectorStyle(CalendarView.STYLE_WEEK_SELECTOR);
-        } else if (item.getItemId() == R.id.day_and_week) {
-            calendarView.setSelectorStyle(CalendarView.STYLE_DAY_AND_WEEK_SELECTOR);
         }
+        updateAdapter();
         return super.onOptionsItemSelected(item);
     }
 
@@ -101,21 +93,30 @@ public class CustomCalendarActivity extends BaseActionBarActivity implements Vie
     }
 
     private void changeTimeInfo(int plusDay) {
-        timeInfo[1] += plusDay;
-        if (timeInfo[1] < 0) {
-            timeInfo[0]--;
-            timeInfo[1] = TimeUtil.WEEKS_OF_YEAR - 1;
+        timeInfo.month += plusDay;
+        if (timeInfo.month < 0) {
+            timeInfo.year --;
+            timeInfo.month = 11;
         }
-        if (timeInfo[1] > TimeUtil.WEEKS_OF_YEAR - 1) {
-            timeInfo[0]++;
-            timeInfo[1] = 0;
+        if (timeInfo.month > 11) {
+            timeInfo.year++;
+            timeInfo.month = 0;
         }
-        tvDate.setText(getString(R.string.date_string_year_month, timeInfo[0], timeInfo[1] + 1));
+        changeTitle(timeInfo);
         updateAdapter();
     }
 
+    private void changeTitle(TimeUtil.TimeInfo info){
+        tvDate.setText(getString(R.string.time_selector_month, info.year, info.month + 1));
+    }
+
     private void updateAdapter() {
-        adapter.setTime(timeInfo[0], timeInfo[1], timeInfo[2]);
+        if(adapter == null || calendarView.getAdapter() == null){
+            adapter = new DayAndWeekAdapter(this);
+            calendarView.setAdapter(adapter);
+        }
+//        adapter.setSpecialTime(timeInfo.year,timeInfo.month,timeInfo.day);
+        adapter.setTime(timeInfo.year, timeInfo.month, timeInfo.week);
         adapter.notifyDataSetChange();
     }
 }

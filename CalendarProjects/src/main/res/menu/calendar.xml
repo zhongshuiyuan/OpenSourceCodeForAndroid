@@ -3,5 +3,4 @@
     <item android:id="@+id/no_style" android:title="不显示选择效果"/>
     <item android:id="@+id/day_style" android:title="仅显示日选择效果"/>
     <item android:id="@+id/week_style" android:title="仅显示周选择效果"/>
-    <item android:id="@+id/day_and_week" android:title="同时显示日和周的选择效果"/>
 </menu>
