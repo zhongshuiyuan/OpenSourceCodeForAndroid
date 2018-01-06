@@ -1,1 +1,1 @@
-include ':CalendarProjects', ':baselib', ':reslib', ':qrcodeprojects', ':autolineedittext', ':zxinglib'
+include ':CalendarProjects', ':baselib', ':reslib', ':QRcodeProjects', ':zxinglib'

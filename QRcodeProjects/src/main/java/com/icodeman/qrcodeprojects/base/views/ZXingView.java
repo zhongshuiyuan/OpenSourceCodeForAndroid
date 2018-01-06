@@ -10,6 +10,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.multi.qrcode.QRCodeMultiReader;
+import com.google.zxing.qrcode.QRCodeReader;
 import com.icodeman.baselib.utils.LogUtil;
 import com.icodeman.qrcodeprojects.base.ZXingConstants;
 import com.icodeman.qrcodeprojects.base.utils.BGAQRCodeUtil;
@@ -19,7 +20,7 @@ import com.icodeman.qrcodeprojects.base.views.QRCodeView;
 public class ZXingView extends QRCodeView {
     private static final String TAG_CLASS = "ZXingView";
     
-    private QRCodeMultiReader reader;
+    private QRCodeReader reader;
 
     public ZXingView(Context context, AttributeSet attributeSet) {
         this(context, attributeSet, 0);
@@ -31,7 +32,7 @@ public class ZXingView extends QRCodeView {
     }
 
     private void initMultiFormatReader() {
-        reader = new QRCodeMultiReader();
+        reader = new QRCodeReader();
     }
 
     @Override

@@ -9,9 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CalendarProjects" />
+            <option value="$PROJECT_DIR$/QRcodeProjects" />
             <option value="$PROJECT_DIR$/autolineedittext" />
             <option value="$PROJECT_DIR$/baselib" />
-            <option value="$PROJECT_DIR$/qrcodeprojects" />
             <option value="$PROJECT_DIR$/reslib" />
             <option value="$PROJECT_DIR$/zxinglib" />
           </set>
