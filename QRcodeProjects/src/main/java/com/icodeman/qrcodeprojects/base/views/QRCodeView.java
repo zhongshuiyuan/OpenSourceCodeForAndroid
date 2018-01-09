@@ -9,12 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.icodeman.baselib.utils.LogUtil;
 import com.icodeman.qrcodeprojects.R;
-import com.icodeman.qrcodeprojects.base.utils.BGAQRCodeUtil;
-import com.icodeman.qrcodeprojects.base.camera.CameraPreview;
 import com.icodeman.qrcodeprojects.base.ProcessDataTask;
-
-import java.util.concurrent.locks.ReentrantLock;
+import com.icodeman.qrcodeprojects.base.ZxingLog;
+import com.icodeman.qrcodeprojects.base.camera.CameraPreview;
+import com.icodeman.qrcodeprojects.base.utils.BGAQRCodeUtil;
 
 public abstract class QRCodeView extends RelativeLayout implements Camera.PreviewCallback, ProcessDataTask.Delegate {
     private static final String TAG = "ZXing_QRCodeView";
@@ -28,6 +28,7 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
     protected ProcessDataTask mProcessDataTask;
     private int mOrientation;
 
+    protected int curZoom = 0;
     protected int maxZoom = 0;
 
     protected int preWidth;
@@ -155,7 +156,7 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
      * 延迟10ms后开始识别
      */
     public void startSpot() {
-        startSpotDelay(5000);
+        startSpotDelay(10);
     }
 
     /**
@@ -256,6 +257,22 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
                     }
                 }
             }.perform();
+        }
+    }
+
+    public synchronized void setZoomRatio(float ratio) {
+        if (ratio <= 0 || ratio >= 1) {
+            return;
+        }
+        int zoom = (int) (maxZoom * (1 - ratio)) - 2;
+        if(zoom >0 && zoom > curZoom) {
+            curZoom = zoom;
+            ZxingLog.i(TAG, "set zoom : " + zoom);
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setZoom(zoom);
+            mCamera.setParameters(parameters);
+        }else {
+            LogUtil.e(TAG,"禁止放大后缩小的操作");
         }
     }
 

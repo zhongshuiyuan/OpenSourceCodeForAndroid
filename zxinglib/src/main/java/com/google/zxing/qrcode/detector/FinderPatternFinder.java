@@ -16,7 +16,10 @@
 
 package com.google.zxing.qrcode.detector;
 
+import android.util.Log;
+
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FoundPartException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.ResultPointCallback;
@@ -73,7 +76,7 @@ public class FinderPatternFinder {
     return possibleCenters;
   }
 
-  final FinderPatternInfo find(Map<DecodeHintType,?> hints) throws NotFoundException {
+  final FinderPatternInfo find(Map<DecodeHintType,?> hints) throws NotFoundException, FoundPartException {
     boolean tryHarder = hints != null && hints.containsKey(DecodeHintType.TRY_HARDER);
     int maxI = image.getHeight();
     int maxJ = image.getWidth();
@@ -159,7 +162,6 @@ public class FinderPatternFinder {
         }
       }
     }
-
     FinderPattern[] patternInfo = selectBestPatterns();
     ResultPoint.orderBestPatterns(patternInfo);
 
@@ -594,10 +596,19 @@ public class FinderPatternFinder {
    *         size differs from the average among those patterns the least
    * @throws NotFoundException if 3 such finder patterns do not exist
    */
-  private FinderPattern[] selectBestPatterns() throws NotFoundException {
+  private FinderPattern[] selectBestPatterns() throws NotFoundException, FoundPartException{
 
     int startSize = possibleCenters.size();
+
     if (startSize < 3) {
+      if(startSize > 0){
+        FoundPartException exception = FoundPartException.getFoundPartInstance();
+        exception.clear();
+        for (FinderPattern fp:possibleCenters){
+          exception.addPattern(fp);
+        }
+        throw exception;
+      }
       // Couldn't find enough finder patterns
       throw NotFoundException.getNotFoundInstance();
     }

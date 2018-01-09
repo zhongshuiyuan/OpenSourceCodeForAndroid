@@ -18,6 +18,7 @@ package com.google.zxing.qrcode.detector;
 
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.FormatException;
+import com.google.zxing.FoundPartException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.ResultPointCallback;
@@ -60,7 +61,7 @@ public class Detector {
    * @throws NotFoundException if QR Code cannot be found
    * @throws FormatException if a QR Code cannot be decoded
    */
-  public DetectorResult detect() throws NotFoundException, FormatException {
+  public DetectorResult detect() throws NotFoundException, FormatException, FoundPartException {
     return detect(null);
   }
 
@@ -72,7 +73,7 @@ public class Detector {
    * @throws NotFoundException if QR Code cannot be found
    * @throws FormatException if a QR Code cannot be decoded
    */
-  public final DetectorResult detect(Map<DecodeHintType,?> hints) throws NotFoundException, FormatException {
+  public final DetectorResult detect(Map<DecodeHintType,?> hints) throws NotFoundException, FormatException, FoundPartException {
 
     resultPointCallback = hints == null ? null :
         (ResultPointCallback) hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);

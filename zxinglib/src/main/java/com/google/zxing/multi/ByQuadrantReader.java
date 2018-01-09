@@ -20,6 +20,7 @@ import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.FormatException;
+import com.google.zxing.FoundPartException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.Reader;
 import com.google.zxing.Result;
@@ -46,13 +47,13 @@ public final class ByQuadrantReader implements Reader {
 
   @Override
   public Result decode(BinaryBitmap image)
-      throws NotFoundException, ChecksumException, FormatException {
+          throws NotFoundException, ChecksumException, FormatException, FoundPartException {
     return decode(image, null);
   }
 
   @Override
   public Result decode(BinaryBitmap image, Map<DecodeHintType,?> hints)
-      throws NotFoundException, ChecksumException, FormatException {
+          throws NotFoundException, ChecksumException, FormatException, FoundPartException {
 
     int width = image.getWidth();
     int height = image.getHeight();
