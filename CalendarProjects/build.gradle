@@ -22,5 +22,4 @@ android {
 
 dependencies {
     compile rootProject.ext.projects["baselib"]
-    compile rootProject.ext.projects["reslib"]
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/container"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <com.icodeman.qrcodeprojects.base.views.ZXingView
+        android:id="@+id/zxing_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        app:qrcv_maskColor="#99000000"
+
+        app:qrcv_cornerColor="#ee21ee12"
+        app:qrcv_cornerSize="1px"
+        app:qrcv_cornerLength="20dp"
+
+        app:qrcv_borderSize="1px"
+        app:qrcv_borderColor="#aaffeeff"
+
+        app:qrcv_tipTextColor="#77CC33"
+        app:qrcv_tipTextSize="14dp"
+        app:qrcv_tipTextMargin="60px"
+        app:qrcv_qrCodeTipText="扫一扫\n（只支持二维码）"
+        app:qrcv_isShowTipTextAsSingleLine="false"
+        app:qrcv_isTipTextBelowRect="true"
+        app:qrcv_isShowTipBackground="false"
+
+        app:qrcv_rectWidth="240dp"
+        app:qrcv_topOffset="100dp"
+
+        app:qrcv_scanLineColor="#aaffeeff"
+        app:qrcv_scanLineMargin="0dp"
+        app:qrcv_scanLineSize="0.2dp"
+
+        app:qrcv_animTime="1000"
+        app:qrcv_customScanLineDrawable="@drawable/me_scan_line"
+        app:qrcv_isShowDefaultScanLineDrawable="true"
+        app:qrcv_isScanLineReverse="false"
+
+        app:qrcv_isOnlyDecodeScanBoxArea="true"
+
+        app:qrcv_isBarcode="false"
+        app:qrcv_isCenterVertical="false"
+        app:qrcv_isShowDefaultGridScanLineDrawable="false"/>
+
+</FrameLayout>
