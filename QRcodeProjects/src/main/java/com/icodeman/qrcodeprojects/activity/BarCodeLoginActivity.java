@@ -1,8 +1,8 @@
 package com.icodeman.qrcodeprojects.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.icodeman.baselib.activity.BaseActivity;
 import com.icodeman.baselib.utils.LogUtil;
@@ -60,6 +60,7 @@ public class BarCodeLoginActivity extends BaseActivity implements QRCodeView.Del
     @Override
     public void onScanQRCodeSuccess(String result) {
         LogUtil.e(ZXingConstants.TAG_MODEL,TAG," result : "+result);
+        Toast.makeText(this,result,Toast.LENGTH_SHORT).show();
         mQRCodeView.stopSpot();
     }
 

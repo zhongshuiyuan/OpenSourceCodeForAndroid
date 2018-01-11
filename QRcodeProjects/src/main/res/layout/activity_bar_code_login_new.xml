@@ -22,7 +22,7 @@
         app:qrcv_tipTextColor="#77CC33"
         app:qrcv_tipTextSize="14dp"
         app:qrcv_tipTextMargin="60px"
-        app:qrcv_qrCodeTipText="用电脑打开网页 web.kd77.cn ，扫\n描二维码登录网页版"
+        app:qrcv_qrCodeTipText="扫一扫\n（只支持二维码）"
         app:qrcv_isShowTipTextAsSingleLine="false"
         app:qrcv_isTipTextBelowRect="true"
         app:qrcv_isShowTipBackground="false"

@@ -265,6 +265,10 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
             return;
         }
         int zoom = (int) (maxZoom * (1 - ratio)) - 2;
+        setZoom(zoom);
+    }
+
+    public void setZoom(int zoom){
         if(zoom >0 && zoom > curZoom) {
             curZoom = zoom;
             ZxingLog.i(TAG, "set zoom : " + zoom);
