@@ -20,7 +20,11 @@ import android.view.View;
 
 import com.icodeman.qrcodeprojects.R;
 import com.icodeman.qrcodeprojects.base.utils.BGAQRCodeUtil;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class ScanBoxView extends View {
     private int mMoveStepDistance;
     private int mAnimDelayTime;

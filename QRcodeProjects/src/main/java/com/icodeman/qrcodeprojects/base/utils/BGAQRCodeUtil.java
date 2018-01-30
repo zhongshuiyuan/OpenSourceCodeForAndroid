@@ -11,7 +11,11 @@ import android.graphics.PorterDuffColorFilter;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class BGAQRCodeUtil {
     public static final int ORIENTATION_PORTRAIT = 0;//竖屏
     public static final int ORIENTATION_LANDSCAPE = 1;//横屏

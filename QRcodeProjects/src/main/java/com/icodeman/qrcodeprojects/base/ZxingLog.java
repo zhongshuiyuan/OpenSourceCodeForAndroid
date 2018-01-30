@@ -2,7 +2,11 @@ package com.icodeman.qrcodeprojects.base;
 
 
 import com.icodeman.baselib.utils.LogUtil;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class ZxingLog {
 
     public static void e(String clazz,String msg){

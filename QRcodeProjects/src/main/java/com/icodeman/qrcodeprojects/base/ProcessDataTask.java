@@ -6,7 +6,11 @@ import android.os.Build;
 
 import com.icodeman.qrcodeprojects.base.utils.BarcodeLockUtil;
 import com.icodeman.qrcodeprojects.base.utils.TimeRecordUtil;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class ProcessDataTask extends AsyncTask<Void, Void, String> {
 
     private byte[] mData;

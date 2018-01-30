@@ -20,7 +20,11 @@ import com.icodeman.qrcodeprojects.base.views.QRCodeView;
 
 import java.util.List;
 
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class ZXingView extends QRCodeView {
     private static final String TAG_CLASS = "ZXingView";
     

@@ -12,7 +12,11 @@ import com.icodeman.qrcodeprojects.base.utils.BGAQRCodeUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 final class CameraConfigurationManager {
     private static final int TEN_DESIRED_ZOOM = 27;
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");

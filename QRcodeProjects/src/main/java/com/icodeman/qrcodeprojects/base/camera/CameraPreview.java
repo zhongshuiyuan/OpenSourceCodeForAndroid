@@ -8,20 +8,26 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = CameraPreview.class.getSimpleName();
     private Camera mCamera;
     private boolean mPreviewing = true;
     private boolean mSurfaceCreated = false;
     private CameraConfigurationManager mCameraConfigurationManager;
+    private Camera.PreviewCallback previewCallback;
 
     public CameraPreview(Context context) {
         super(context);
     }
 
-    public void setCamera(Camera camera) {
+    public void setCamera(Camera camera,Camera.PreviewCallback callback) {
         mCamera = camera;
+        previewCallback = callback;
         if (mCamera != null) {
             mCameraConfigurationManager = new CameraConfigurationManager(getContext());
             mCameraConfigurationManager.initFromCameraParameters(mCamera);
@@ -68,6 +74,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 mCamera.setPreviewDisplay(getHolder());
 
                 mCameraConfigurationManager.setDesiredCameraParameters(mCamera);
+                mCamera.setPreviewCallback(previewCallback);
                 mCamera.startPreview();
 
                 mCamera.autoFocus(autoFocusCB);

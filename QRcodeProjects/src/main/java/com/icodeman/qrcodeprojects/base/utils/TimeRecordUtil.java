@@ -1,7 +1,11 @@
 package com.icodeman.qrcodeprojects.base.utils;
 
 import com.icodeman.qrcodeprojects.base.ZxingLog;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public class TimeRecordUtil {
     private static final String TAG = "ZXing_TimeRecordUtil";
 

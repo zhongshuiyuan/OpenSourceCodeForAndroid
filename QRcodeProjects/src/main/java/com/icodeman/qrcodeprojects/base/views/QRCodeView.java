@@ -15,7 +15,11 @@ import com.icodeman.qrcodeprojects.base.ProcessDataTask;
 import com.icodeman.qrcodeprojects.base.ZxingLog;
 import com.icodeman.qrcodeprojects.base.camera.CameraPreview;
 import com.icodeman.qrcodeprojects.base.utils.BGAQRCodeUtil;
-
+/**
+ * @author ICodeMan
+ * @github https://github.com/LMW-ICodeMan
+ * @date 2018/1/11
+ */
 public abstract class QRCodeView extends RelativeLayout implements Camera.PreviewCallback, ProcessDataTask.Delegate {
     private static final String TAG = "ZXing_QRCodeView";
 
@@ -119,7 +123,7 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
     private void startCameraById(int cameraId) {
         try {
             mCamera = Camera.open(cameraId);
-            mPreview.setCamera(mCamera);
+            mPreview.setCamera(mCamera,this);
             initCameraInfo();
         } catch (Exception e) {
             if (mDelegate != null) {
@@ -144,7 +148,7 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
             stopSpotAndHiddenRect();
             if (mCamera != null) {
                 mPreview.stopCameraPreview();
-                mPreview.setCamera(null);
+                mPreview.setCamera(null,null);
                 mCamera.release();
                 mCamera = null;
             }
@@ -156,21 +160,8 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
      * 延迟10ms后开始识别
      */
     public void startSpot() {
-        startSpotDelay(10);
-    }
-
-    /**
-     * 延迟delay毫秒后开始识别
-     *
-     * @param delay
-     */
-    public void startSpotDelay(int delay) {
         mSpotAble = true;
-
         startCamera();
-        // 开始前先移除之前的任务
-        mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
-        mHandler.postDelayed(mOneShotPreviewCallbackTask, delay);
     }
 
     /**
@@ -180,16 +171,6 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
         cancelProcessDataTask();
 
         mSpotAble = false;
-
-        if (mCamera != null) {
-            try {
-                mCamera.setPreviewCallback(null);
-            } catch (Exception e) {
-            }
-        }
-        if (mHandler != null) {
-            mHandler.removeCallbacks(mOneShotPreviewCallbackTask);
-        }
     }
 
     /**
@@ -221,7 +202,6 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
         stopCamera();
         mHandler = null;
         mDelegate = null;
-        mOneShotPreviewCallbackTask = null;
     }
 
     /**
@@ -279,19 +259,6 @@ public abstract class QRCodeView extends RelativeLayout implements Camera.Previe
             LogUtil.e(TAG,"禁止放大后缩小的操作");
         }
     }
-
-    private Runnable mOneShotPreviewCallbackTask = new Runnable() {
-        @Override
-        public void run() {
-            if (mCamera != null && mSpotAble) {
-                try {
-                    mCamera.setPreviewCallback(QRCodeView.this);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
 
     public interface Delegate {
         /**
