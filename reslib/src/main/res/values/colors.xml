@@ -10,4 +10,6 @@
     <color name="transparent">#00ffffff</color>
     <color name="transparent_white_80ffffff">#80ffffff</color>
     <color name="transparent_black_80000000">#80000000</color>
+
+    <color name="divider">#EEEEEE</color>
 </resources>

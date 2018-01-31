@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CalendarProjects/CalendarProjects.iml" filepath="$PROJECT_DIR$/CalendarProjects/CalendarProjects.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NetProjects/NetProjects.iml" filepath="$PROJECT_DIR$/NetProjects/NetProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/QRcodeProjects/QRcodeProjects.iml" filepath="$PROJECT_DIR$/QRcodeProjects/QRcodeProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/SampleProjects.iml" filepath="$PROJECT_DIR$/SampleProjects.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselib/baselib.iml" filepath="$PROJECT_DIR$/baselib/baselib.iml" />

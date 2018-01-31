@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CalendarProjects" />
+            <option value="$PROJECT_DIR$/NetProjects" />
             <option value="$PROJECT_DIR$/QRcodeProjects" />
             <option value="$PROJECT_DIR$/baselib" />
             <option value="$PROJECT_DIR$/reslib" />
