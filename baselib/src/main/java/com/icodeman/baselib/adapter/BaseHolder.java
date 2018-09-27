@@ -14,7 +14,7 @@ public abstract class BaseHolder {
         baseView = view;
     }
 
-    public <V extends View> V findViewById(int resId){
+    public <V extends View> V get(int resId){
         return (V)baseView.findViewById(resId);
     }
 
