@@ -1,0 +1,33 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
+
+
+    defaultConfig {
+        applicationId "com.icodeman.application"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile rootProject.ext.projects["baselib"]
+    compile rootProject.ext.projects["calendar"]
+    compile rootProject.ext.projects["nethelper"]
+    compile rootProject.ext.projects["qrcode"]
+}

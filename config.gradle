@@ -3,10 +3,10 @@ ext {
             compileSdkVersion: 24,// 用于编译的SDK版本
             buildToolsVersion: "25.0.3",// 用于Gradle编译项目的工具版本
 
-            minSdkVersion    : 14,// 最低支持Android版本
-            targetSdkVersion : 21,// 目标版本
+            minSdkVersion    : 19,// 最低支持Android版本
+            targetSdkVersion : 26,// 目标版本
 
-            VSupportSdk      : '24.2.1'
+            VSupportSdk      : '23.1.0'
     ]
 
     dependencies = [
@@ -18,8 +18,13 @@ ext {
     ]
 
     projects = [
-            "baselib": project(":baselib"),
-            "reslib" : project(":reslib"),
-            "zxinglib":project(":zxinglib")
+            "baselib"  : project(":baselib"),
+            "reslib"   : project(":reslib"),
+
+            "zxinglib" : project(":third_libs:zxinglib"),
+
+            "calendar" : project(":business_module:calendar"),
+            "qrcode"   : project(":business_module:qrcode"),
+            "nethelper": project(":business_module:nethelper")
     ]
 }

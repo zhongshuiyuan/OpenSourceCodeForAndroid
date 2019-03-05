@@ -8,12 +8,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/CalendarProjects" />
-            <option value="$PROJECT_DIR$/NetProjects" />
-            <option value="$PROJECT_DIR$/QRcodeProjects" />
+            <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/baselib" />
+            <option value="$PROJECT_DIR$/business_module" />
+            <option value="$PROJECT_DIR$/business_module/calendar" />
+            <option value="$PROJECT_DIR$/business_module/nethelper" />
+            <option value="$PROJECT_DIR$/business_module/qrcode" />
             <option value="$PROJECT_DIR$/reslib" />
-            <option value="$PROJECT_DIR$/zxinglib" />
+            <option value="$PROJECT_DIR$/third_libs" />
+            <option value="$PROJECT_DIR$/third_libs/zxinglib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

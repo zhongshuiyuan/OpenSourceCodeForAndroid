@@ -14,9 +14,10 @@ import com.icodeman.baselib.R;
  * @date 2017/11/24
  */
 
-public abstract class BaseActionBarActivity extends AppCompatActivity{
+public abstract class BaseActionBarActivity extends AppCompatActivity {
     private View baseView;
     private Toolbar toolbar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,22 +25,21 @@ public abstract class BaseActionBarActivity extends AppCompatActivity{
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         initToolbar(toolbar);
         setSupportActionBar(toolbar);
-        baseView = getLayoutInflater().inflate(getLayoutId(),null);
-        ((ViewGroup)findViewById(R.id.frame)).addView(getLayoutInflater().inflate(getLayoutId(),null));
+        baseView = getLayoutInflater().inflate(getLayoutId(), null);
+        ((ViewGroup) findViewById(R.id.frame)).addView(getLayoutInflater().inflate(getLayoutId(), null));
     }
 
 
-    protected void initToolbar(Toolbar toolbar) {
-
-    }
+    abstract protected void initToolbar(Toolbar toolbar) ;
 
     /**
      * 获取界面的资源Id
+     *
      * @return
      */
     public abstract int getLayoutId();
 
-    public <V extends View> V getView(int resId){
-        return (V)baseView.findViewById(resId);
+    public <V extends View> V getView(int resId) {
+        return (V) baseView.findViewById(resId);
     }
 }

@@ -2,14 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CalendarProjects/CalendarProjects.iml" filepath="$PROJECT_DIR$/CalendarProjects/CalendarProjects.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NetProjects/NetProjects.iml" filepath="$PROJECT_DIR$/NetProjects/NetProjects.iml" />
-      <module fileurl="file://$PROJECT_DIR$/QRcodeProjects/QRcodeProjects.iml" filepath="$PROJECT_DIR$/QRcodeProjects/QRcodeProjects.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SampleProjects.iml" filepath="$PROJECT_DIR$/SampleProjects.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenSourceCodeForAndroid.iml" filepath="$PROJECT_DIR$/OpenSourceCodeForAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselib/baselib.iml" filepath="$PROJECT_DIR$/baselib/baselib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/business_module/business_module.iml" filepath="$PROJECT_DIR$/business_module/business_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/business_module/calendar/calendar.iml" filepath="$PROJECT_DIR$/business_module/calendar/calendar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/business_module/nethelper/nethelper.iml" filepath="$PROJECT_DIR$/business_module/nethelper/nethelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/business_module/qrcode/qrcode.iml" filepath="$PROJECT_DIR$/business_module/qrcode/qrcode.iml" />
       <module fileurl="file://$PROJECT_DIR$/reslib/reslib.iml" filepath="$PROJECT_DIR$/reslib/reslib.iml" />
-      <module fileurl="file://E:\SampleProjects\zxinglib\zxing.iml" filepath="E:\SampleProjects\zxinglib\zxing.iml" />
-      <module fileurl="file://$PROJECT_DIR$/zxinglib/zxinglib.iml" filepath="$PROJECT_DIR$/zxinglib/zxinglib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/third_libs/third_libs.iml" filepath="$PROJECT_DIR$/third_libs/third_libs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/third_libs/zxinglib/zxinglib.iml" filepath="$PROJECT_DIR$/third_libs/zxinglib/zxinglib.iml" />
     </modules>
   </component>
 </project>

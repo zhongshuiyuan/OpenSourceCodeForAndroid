@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">CalendarProjects</string>
-
-    <string name="time_selector_year">%1$d年</string>
-    <string name="time_selector_month">%1$d年%2$d月</string>
-</resources>

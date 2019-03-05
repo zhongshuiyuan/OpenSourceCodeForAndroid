@@ -1,1 +1,7 @@
-include ':CalendarProjects', ':baselib', ':reslib', ':QRcodeProjects', ':zxinglib', ':NetProjects'
+include  ':app',
+        ':baselib',
+        ':reslib',
+        ':third_libs:zxinglib',
+        ':business_module:calendar',
+        ':business_module:qrcode',
+        ':business_module:nethelper'
