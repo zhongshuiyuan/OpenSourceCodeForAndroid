@@ -1,3 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="project_name_qrcode">二维码相关功能</string>
 </resources>

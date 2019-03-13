@@ -1,10 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.icodeman.calendars">
+          package="com.icodeman.calendars">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_icm"
         android:supportsRtl="true">
+        <activity android:name=".CalendarMainActivity"/>
         <activity android:name=".custom_calendar.CustomCalendarActivity"/>
     </application>
 </manifest>

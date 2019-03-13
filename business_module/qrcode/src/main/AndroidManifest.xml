@@ -7,7 +7,7 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
-        <activity android:name=".activity.BarCodeLoginActivity"/>
+        <activity android:name=".activity.BarCodeMainActivity"/>
 
     </application>
 </manifest>

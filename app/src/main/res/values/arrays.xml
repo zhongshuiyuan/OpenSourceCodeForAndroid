@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="project_list">
+        <item>@string/project_name_qrcode</item>
+        <item>@string/project_name_calendar</item>
+    </array>
+</resources>

@@ -14,7 +14,7 @@ import com.icodeman.baselib.activity.BaseActivity;
  * @github https://github.com/LMW-ICodeMan
  * @date 2018/1/30
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class NetHelperMainActivity extends BaseActivity implements View.OnClickListener {
     private TextView tvIpAddress, tvSubnetAddress, tvSubnetNumber;
     private Button btGetAddress, btCheckAddress;
     private TextView infoView;
@@ -22,6 +22,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
+    }
+
+    @Override
+    public String getCenterTitle() {
+        return "IP地址生成工具";
     }
 
     @Override
@@ -59,7 +64,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         int[] ipInfo = getArrayFromString(ip);
         int[] subnetInfo = getSubnetInfoFromCIDR(cidr);
-        if(!checkAddressInfo(ipInfo) ||!checkAddressInfo(subnetInfo)){
+        if (!checkAddressInfo(ipInfo) || !checkAddressInfo(subnetInfo)) {
             addLineInfo("出现错误");
             return;
         }
@@ -69,16 +74,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void getInfoBySubnetAddress(String ip, String subnet) {
         int[] ipInfo = getArrayFromString(ip);
         int[] subnetInfo = getArrayFromString(subnet);
-        if(!checkAddressInfo(ipInfo) ||!checkAddressInfo(subnetInfo)){
+        if (!checkAddressInfo(ipInfo) || !checkAddressInfo(subnetInfo)) {
             addLineInfo("出现错误");
             return;
         }
         refreshInfo(ipInfo, subnetInfo);
     }
 
-    private boolean checkAddressInfo(int[] info){
-        for (int i:info){
-            if(i<0||i>255){
+    private boolean checkAddressInfo(int[] info) {
+        for (int i : info) {
+            if (i < 0 || i > 255) {
                 return false;
             }
         }

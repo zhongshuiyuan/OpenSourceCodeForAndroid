@@ -18,8 +18,12 @@ public class SystemCalendarActivity extends BaseActivity{
     }
 
     @Override
+    public String getCenterTitle() {
+        return null;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 }

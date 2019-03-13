@@ -50,7 +50,7 @@ public abstract class BaseListAdapter<D,H extends BaseHolder> extends BaseAdapte
         }else {
             holder = (H)convertView.getTag();
         }
-        buildHolder(holder,data.get(position));
+        buildHolder(holder,position,data.get(position));
         return convertView;
     }
 
@@ -58,5 +58,5 @@ public abstract class BaseListAdapter<D,H extends BaseHolder> extends BaseAdapte
 
     public abstract H getHolder(View baseView);
 
-    public abstract void buildHolder(H holder,D data);
+    public abstract void buildHolder(H holder,int position,D data);
 }

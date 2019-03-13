@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
 
 import com.icodeman.baselib.activity.BaseActionBarActivity;
 import com.icodeman.baselib.utils.DensityUtil;
@@ -22,10 +22,10 @@ import com.icodeman.calendars.custom_calendar.timeselector.widget.CalendarView;
  */
 public class CustomCalendarActivity extends BaseActionBarActivity implements View.OnClickListener {
 
-    TextView tvDate;
+    private TextView tvDate;
 
-    CalendarView calendarView;
-    DayAndWeekAdapter adapter;
+    private CalendarView calendarView;
+    private DayAndWeekAdapter adapter;
 
     @Override
     public int getLayoutId() {
@@ -45,11 +45,6 @@ public class CustomCalendarActivity extends BaseActionBarActivity implements Vie
         initTime();
 
         initCalendar();
-    }
-
-    @Override
-    protected void initToolbar(android.support.v7.widget.Toolbar toolbar) {
-
     }
 
     @Override
